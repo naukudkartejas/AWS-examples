@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# Check if a bucket name is provided as the first argument
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name"
+    exit 1
+fi
+
+# Assign the first argument to BUCKET_NAME
+BUCKET_NAME="$1"
+
+# Define a temporary output directory to store the generated files
+output_dir="/tmp/s3-Bash-scripts"
+
+# Remove the output directory if it already exists to start fresh
+rm -rf "$output_dir"
+
+# Create the output directory
+mkdir -p "$output_dir"
+
+# Generate a random number of files between 5 and 10
+num_files=$((RANDOM % 6 + 5))
+
+# Loop to create random files
+for ((i = 1; i <= num_files; i++)); do
+    # Define a filename with an incremented counter
+    random_filename="$output_dir/file_$i.txt"
+
+    # Generate a file with random content between 1KB and ~1MB
+    dd if=/dev/urandom of="$random_filename" bs=1024 count=$((RANDOM % 1024 + 1)) status=none
+done
+
+# Display the structure of the output directory using tree (optional but useful for debugging)
+tree "$output_dir"
+
+# Sync the generated files to the specified S3 bucket
+aws s3 sync "$output_dir" "s3://$BUCKET_NAME"
