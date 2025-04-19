@@ -26,8 +26,8 @@ num_files=$((RANDOM % 6 + 5))
 
 # Loop to create random files
 for ((i = 1; i <= num_files; i++)); do
-    # Define a filename with an incremented counter
-    random_filename="$output_dir/file_$i.txt"
+    # Define a filename with an incremented counterS
+    random_filename="$output_dir/${FILENAME_PREFIX}$i.txt"
 
     # Generate a file with random content between 1KB and ~1MB
     dd if=/dev/urandom of="$random_filename" bs=1024 count=$((RANDOM % 1024 + 1)) status=none
